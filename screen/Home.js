@@ -32,40 +32,15 @@ const ColourView = ({ hexCode }) => {
   return <View style={[styles.box, { backgroundColor: hexCode }]} />;
 };
 
-const styles = StyleSheet.create({
-  listItem: {
-    padding: 3,
-    marginHorizontal: 4,
-    marginBottom: 10,
-  },
-  header: {
-    fontWeight: 'bold',
-    fontSize: 18,
-  },
-  colorBoxs: {
-    flexDirection: 'row',
-  },
-  box: {
-    height: 30,
-    width: 30,
-    borderRadius: 2,
-    marginHorizontal: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.3,
-    shadowRadius: 1,
-    elevation: 2,
-  },
-});
-
 const ListHeader = ({ navigate }) => {
   return (
     <TouchableOpacity onPress={() => navigate('ColorPaletteModal')}>
-      <Text>Create a new Color palette</Text>
+      <Text style={styles.buttonText}>Create a new Color palette</Text>
     </TouchableOpacity>
   );
 };
-const Home = ({ navigation: { navigate, push } }) => {
+const Home = ({ navigation: { navigate, push }, route }) => {
+  const newColorPallete = route.params?.newColorPallete;
   const SOLARIZED = [
     { colorName: 'Base03', hexCode: '#002b36' },
     { colorName: 'Base02', hexCode: '#073642' },
@@ -127,10 +102,20 @@ const Home = ({ navigation: { navigate, push } }) => {
       setIsRefreshing(false);
     }, 1000);
   }, []);
+
   useEffect(() => {
     getPalletes();
     return () => {};
   }, []);
+
+  useEffect(() => {
+    if (newColorPallete?.NAME) {
+      setApiData((palettes) => [
+        newColorPallete,
+        ...palettes.filter((item) => item.NAME !== newColorPallete.NAME),
+      ]);
+    }
+  }, [newColorPallete]);
   return (
     <View style={{ backgroundColor: 'white', flex: 1 }}>
       <FlatList
@@ -147,5 +132,37 @@ const Home = ({ navigation: { navigate, push } }) => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  listItem: {
+    padding: 3,
+    marginHorizontal: 4,
+    marginBottom: 10,
+  },
+  header: {
+    fontWeight: 'bold',
+    fontSize: 18,
+  },
+  colorBoxs: {
+    flexDirection: 'row',
+  },
+  box: {
+    height: 30,
+    width: 30,
+    borderRadius: 2,
+    marginHorizontal: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.3,
+    shadowRadius: 1,
+    elevation: 2,
+  },
+  buttonText: {
+    fontSize: 18,
+    color: 'teal',
+    fontWeight: 'bold',
+    padding: 5,
+  },
+});
 
 export default Home;
